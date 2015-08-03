@@ -13,6 +13,8 @@ import java.io.PrintWriter;
  */
 public class FileUtil {
 	
+	public static final int FILTER_SIZE = 21;
+
 	/**
 	 * Method to open a text file and load the data set
 	 * @param fileName - Name of the file to be loaded
@@ -57,7 +59,6 @@ public class FileUtil {
 		PrintWriter pw = new PrintWriter(new FileWriter(fileName));
 		 
 		for (int i = 0; i < newData.length; i++) {
-			System.out.println(newData[i]);
 			pw.write(newData[i] + "\n");
 		}
 	 
