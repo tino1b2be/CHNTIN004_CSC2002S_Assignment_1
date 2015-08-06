@@ -13,7 +13,7 @@ import java.io.PrintWriter;
  */
 public class FileUtil {
 	
-	public static final int FILTER_SIZE = 21;
+	public static final int FILTER_SIZE = 3;
 
 	/**
 	 * Method to open a text file and load the data set
