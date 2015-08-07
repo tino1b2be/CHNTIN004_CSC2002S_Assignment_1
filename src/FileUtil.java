@@ -4,6 +4,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 
 /**
  * Class for file handling
@@ -12,8 +13,6 @@ import java.io.PrintWriter;
  *
  */
 public class FileUtil {
-	
-	public static final int FILTER_SIZE = 3;
 
 	/**
 	 * Method to open a text file and load the data set
@@ -64,4 +63,16 @@ public class FileUtil {
 	 
 		pw.close();
 	}
+
+	public static void writeToFile(ArrayList<Double> seqDataOut, String fileName) throws IOException {
+		PrintWriter pw = new PrintWriter(new FileWriter(fileName));
+		 
+		for (int i = 0; i < seqDataOut.size(); i++) {
+			pw.write(seqDataOut.get(i)+ "\n");
+		}
+	 
+		pw.close();
+		
+	}
+
 }

@@ -35,18 +35,58 @@ public class Main {
 		Scanner sc = new Scanner(System.in);
 		ForkJoinPool fjPool = new ForkJoinPool();
 		
+		//Testing different inputs for defaults filter size
 		do{
 			System.out.println("Select input to use:\n"
 					+ "1: input1\n"
 					+ "2: input2\n"
 					+ "3: input3\n"
 					+ "4: input4\n"
-					+ "5: Quit");
+					+ "5: Test Filter sizes (3-21)\n"
+					+ "6: Test Sequential cut-offs\n"
+					+ "7: Test Warm up times\n"
+					+ "8: Quit");
 			
 			String input = sc.nextLine();
 			
-			if (input.equals("5")){
+			if (input.equals("8")){
 				System.exit(0);
+			}
+			else if (input.equals("5")){
+				try {
+					Tests tests = new Tests(dataSet4);
+					long ttime1 = System.currentTimeMillis();
+					tests.runFilterTests();
+					System.out.println("Tests lasted" + (System.currentTimeMillis() - ttime1) + "ms");
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+					continue;
+				}
+			}
+			else if (input.endsWith("6")){
+				try {
+					Tests tests = new Tests(dataSet4);
+					long ttime1 = System.currentTimeMillis();
+					tests.runCutOffTests();
+					System.out.println("Tests lasted" + (System.currentTimeMillis() - ttime1) + "ms");
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+					continue;
+				}
+			}
+			else if (input.equals("7")){
+				try {
+					Tests tests = new Tests(dataSet4);
+					long ttime1 = System.currentTimeMillis();
+					tests.runWarmUpTests();
+					System.out.println("Tests lasted" + (System.currentTimeMillis() - ttime1) + "ms");
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+					continue;
+				}
 			}
 			else if (input.equals("1") || input.equals("2") || input.equals("3") || input.equals("4")){
 	
@@ -110,8 +150,8 @@ public class Main {
 					}
 					break;
 		
-					case("4"):
-						Filter set04 = new Filter(dataSet4);
+				case("4"):
+					Filter set04 = new Filter(dataSet4);
 					double[] par04, seq04;
 					sqtime = System.nanoTime();
 					seq04 = set04.sequential();

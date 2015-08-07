@@ -4,7 +4,8 @@ import java.util.concurrent.RecursiveTask;
 @SuppressWarnings("serial")
 public class Filter extends RecursiveTask<double[]>{
 	
-	static int SEQUENTIAL_THRESHOLD = 1000;
+	public static int SEQUENTIAL_THRESHOLD = 10000;
+	public static int FILTER_SIZE = 21;
 	
 	private double[] dataSet;
 	private int hi;
@@ -59,8 +60,8 @@ public class Filter extends RecursiveTask<double[]>{
 		
 		//TODO Filter must work properly when bigger than 3
 		
-		int finish = index + ((FileUtil.FILTER_SIZE-1)/2);
-		int start = index - ((FileUtil.FILTER_SIZE-1)/2);
+		int finish = index + ((Filter.FILTER_SIZE-1)/2);
+		int start = index - ((Filter.FILTER_SIZE-1)/2);
 		// slice off a chunk of the dataSet same size as filter size
 		double[] filterBlock = sliceDataSet(start,finish);
 		return median(filterBlock);
@@ -110,16 +111,16 @@ public class Filter extends RecursiveTask<double[]>{
 		// first and last elements aren't changed
 		newDataSet[0] = dataSet[0];
 		
-		for (int j = 0; j < (FileUtil.FILTER_SIZE - 1)/2; j++){
+		for (int j = 0; j < (Filter.FILTER_SIZE - 1)/2; j++){
 			newDataSet[j] = dataSet[j];
 		}
 		
-		for (int j = dataSet.length - (FileUtil.FILTER_SIZE - 1)/2; j < dataSet.length; j++){
+		for (int j = dataSet.length - (Filter.FILTER_SIZE - 1)/2; j < dataSet.length; j++){
 			newDataSet[j] = dataSet[j];
 		}
 		
 		//filter the rest of the data set
-		for (int i = 0 + (FileUtil.FILTER_SIZE - 1)/2; i < dataSet.length - (FileUtil.FILTER_SIZE - 1)/2; i++){
+		for (int i = 0 + (Filter.FILTER_SIZE - 1)/2; i < dataSet.length - (Filter.FILTER_SIZE - 1)/2; i++){
 			newDataSet[i] = filter(i);
 		}
 
@@ -139,13 +140,13 @@ public class Filter extends RecursiveTask<double[]>{
 			if (low == 0){									
 				
 				// Start filtering where the filter can "fit"
-				for (int i = 0; i <(FileUtil.FILTER_SIZE - 1)/2; i++){
+				for (int i = 0; i <(Filter.FILTER_SIZE - 1)/2; i++){
 					newDataSet[i] = dataSet[i];
 					count++;
 				}
 				
 				//Filter the rest of the array
-				for (int i = (FileUtil.FILTER_SIZE - 1)/2; i < hi; i++){
+				for (int i = (Filter.FILTER_SIZE - 1)/2; i < hi; i++){
 					newDataSet[count] = filter(i);
 					count++;
 				}
@@ -154,13 +155,13 @@ public class Filter extends RecursiveTask<double[]>{
 			else if (hi == dataSet.length){									
 				
 				// Stop before end of the list (filter size) 
-				for (int i = low; i < dataSet.length - (FileUtil.FILTER_SIZE - 1)/2; i++){
+				for (int i = low; i < dataSet.length - (Filter.FILTER_SIZE - 1)/2; i++){
 					newDataSet[count] = filter(i);
 					count++;
 				}
 				
 				// copy the end of the data set
-				for (int i = dataSet.length - (FileUtil.FILTER_SIZE - 1)/2; i < dataSet.length; i++ ){
+				for (int i = dataSet.length - (Filter.FILTER_SIZE - 1)/2; i < dataSet.length; i++ ){
 					newDataSet[count] = dataSet[i];
 					count++;
 				}
@@ -208,27 +209,13 @@ public class Filter extends RecursiveTask<double[]>{
         System.arraycopy(rightArray, 0, result, leftArray.length, rightArray.length);
         
         return result;
-        //TODO Test this method in JUnit
+
 	}
 	
-	/*
-	public boolean equals(Object other) {
-	    if (!(other instanceof Filter)) {
-	        return false;
-	    }
-
-	    Filter otherClass = (Filter) other;
-
-	    if (this.dataSet.length != otherClass.dataSet.length)
-	    	return false;
-	    else {
-	    	boolean flag = true;
-	    	for (int i = 0; i < dataSet.length; i++){
-	    		if (this.dataSet[i] != otherClass.dataSet[i])
-	    			return false;
-	    	}
-	    	
-	    	return flag;
-	    }
-	}*/
+	public static void setCuttOff(int cutOff){
+		SEQUENTIAL_THRESHOLD = cutOff;
+	}
+	public static void setFilterSize(int size){
+		FILTER_SIZE = size;
+	}
 }
