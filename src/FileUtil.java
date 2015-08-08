@@ -70,9 +70,6 @@ public class FileUtil {
 		for (int i = 0; i < seqDataOut.size(); i++) {
 			pw.write(seqDataOut.get(i)+ "\n");
 		}
-	 
 		pw.close();
-		
 	}
-
 }

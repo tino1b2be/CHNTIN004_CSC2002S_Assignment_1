@@ -22,12 +22,15 @@ public class Main {
 		double[] dataSet2 = null;
 		double[] dataSet3 = null;
 		double[] dataSet4 = null;
+		double[] dataSetP = null;
+		System.out.println("Loading the input files");
 		try {
 			dataSet1 = FileUtil.loadFile("SampleDataForAssignment1/inp1.txt");
 			//dataSet1 = FileUtil.loadFile("SampleDataForAssignment1/test.txt");
 			dataSet2 = FileUtil.loadFile("SampleDataForAssignment1/inp2.txt");
 			dataSet3 = FileUtil.loadFile("SampleDataForAssignment1/inp3.txt");
 			dataSet4 = FileUtil.loadFile("SampleDataForAssignment1/inp4.txt");
+			dataSetP = FileUtil.loadFile("SampleDataForAssignment1/CustomSet.txt"); // Personal Data set of 2 million entries
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -45,33 +48,33 @@ public class Main {
 					+ "5: Test Filter sizes (3-21)\n"
 					+ "6: Test Sequential cut-offs\n"
 					+ "7: Test Warm up times\n"
-					+ "8: Quit");
+					+ "8: Personal Input Size\n"
+					+ "9: Universal Speed Up Test\n"
+					+ "q: Quit");
 			
 			String input = sc.nextLine();
 			
-			if (input.equals("8")){
+			if (input.equals("q")){
 				System.exit(0);
 			}
 			else if (input.equals("5")){
 				try {
-					Tests tests = new Tests(dataSet4);
+					Tests tests = new Tests(dataSetP);
 					long ttime1 = System.currentTimeMillis();
 					tests.runFilterTests();
-					System.out.println("Tests lasted" + (System.currentTimeMillis() - ttime1) + "ms");
+					System.out.println("Tests lasted " + (System.currentTimeMillis() - ttime1) + "ms");
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 					continue;
 				}
 			}
 			else if (input.endsWith("6")){
 				try {
-					Tests tests = new Tests(dataSet4);
+					Tests tests = new Tests(dataSetP);
 					long ttime1 = System.currentTimeMillis();
 					tests.runCutOffTests();
-					System.out.println("Tests lasted" + (System.currentTimeMillis() - ttime1) + "ms");
+					System.out.println("Tests lasted " + (System.currentTimeMillis() - ttime1) + "ms");
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 					continue;
 				}
@@ -81,98 +84,86 @@ public class Main {
 					Tests tests = new Tests(dataSet4);
 					long ttime1 = System.currentTimeMillis();
 					tests.runWarmUpTests();
-					System.out.println("Tests lasted" + (System.currentTimeMillis() - ttime1) + "ms");
+					System.out.println("Tests lasted " + (System.currentTimeMillis() - ttime1) + "ms");
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 					continue;
 				}
 			}
+			else if (input.equals("8")){
+				System.out.print("Please enter the input size (between 10000 and 1999856): ");
+				do{
+					int input2 = Integer.parseInt(sc.nextLine());
+					
+					if(input2 < 10000 || input2 > 2000000){
+						System.out.println("invalid input. try again");
+						continue;
+					}
+					else {
+						Tests newCustom = new Tests(dataSetP, input2);
+						try {
+							newCustom.runSpeedUpTest();
+						} catch (IOException e) {
+							e.printStackTrace();
+						}
+						break;
+					}
+				}while(true);
+			}
+			else if (input.equals("9")){			// Universal Test. Test speed ups for different data sizes
+				Tests newCustom = new Tests(dataSetP);
+				try {
+					newCustom.runUniversalSpeedUpTest();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+				break;
+			}
 			else if (input.equals("1") || input.equals("2") || input.equals("3") || input.equals("4")){
 	
 				long sqtime,sqtime2, ptime, ptime2;
+				
 				switch(input){
 				case("1"):
-					Filter set01 = new Filter(dataSet1);		//Create a filter object to perform the filtering
-					double[] par01, seq01;						//create the arrays to store the filtered data
-		
-					sqtime = System.nanoTime();
-					seq01 = set01.sequential();					//process the data sequentially
-					sqtime2 = System.nanoTime();
-		
-					ptime = System.nanoTime();
-					par01 = fjPool.invoke(set01);				//process the data using the parallel method
-					ptime2 = System.nanoTime();
-		
-					System.out.println("Sequential input01 time (ns):" + (sqtime2 - sqtime));	//print the time taken to process sequentially
-					System.out.println("Parallel input01 time (ns):" + (ptime2 - ptime));		//print the time taken to process in parallel
-					if((ptime2 - ptime)!=0){
-						System.out.println(String.format("Speed up is: %.5f\n ",((sqtime2 - sqtime)*1.0)/(1.0*(ptime2 - ptime))));	//divide the seq time by the par time to get the speed up
+					Tests test = new Tests(dataSet1);
+					try {
+						test.runSpeedUpTest();
+					} catch (IOException e) {
+						e.printStackTrace();
 					}
-					else
-						System.out.println("too fast");
 					break;
 	
 				case("2"):
-					Filter set02 = new Filter(dataSet2);
-					double[] par02, seq02;
-		
-					sqtime = System.nanoTime();
-					seq02 = set02.sequential();
-					sqtime2 = System.nanoTime();
-		
-					ptime = System.nanoTime();
-					par02 = fjPool.invoke(set02);
-					ptime2 = System.nanoTime();
-		
-					System.out.println("Sequential input02 time (ns):" + (sqtime2 - sqtime));
-					System.out.println("Parallel input02 time (ns):" + (ptime2 - ptime));
-					if((ptime2 - ptime)!=0){
-						System.out.println(String.format("Speed up is: %.5f\n ",((sqtime2 - sqtime)*1.0)/(1.0*(ptime2 - ptime))));	//divide the seq time by the par time to get the speed up
+					Tests test2 = new Tests(dataSet2);
+					try {
+						test2.runSpeedUpTest();
+					} catch (IOException e) {
+						e.printStackTrace();
 					}
 					break;	
 	
 				case("3"):
-					Filter set03 = new Filter(dataSet3);
-					double[] par03, seq03;
-					sqtime = System.nanoTime();
-					seq03 = set03.sequential();
-					sqtime2 = System.nanoTime();
-		
-					ptime = System.nanoTime();
-					par03 = fjPool.invoke(set03);
-					ptime2 = System.nanoTime();
-		
-					System.out.println("Sequential input03 time (ns):" + (sqtime2 - sqtime));
-					System.out.println("Parallel input03 time (ns):" + (ptime2 - ptime));
-					if((ptime2 - ptime)!=0){
-						System.out.println(String.format("Speed up is: %.5f\n ",((sqtime2 - sqtime)*1.0)/(1.0*(ptime2 - ptime))));	//divide the seq time by the par time to get the speed up
+					Tests test3 = new Tests(dataSet3);
+					try {
+						test3.runSpeedUpTest();
+					} catch (IOException e) {
+						e.printStackTrace();
 					}
 					break;
 		
 				case("4"):
-					Filter set04 = new Filter(dataSet4);
-					double[] par04, seq04;
-					sqtime = System.nanoTime();
-					seq04 = set04.sequential();
-					sqtime2 = System.nanoTime();
-		
-					ptime = System.nanoTime();
-					par04 = fjPool.invoke(set04);
-					ptime2 = System.nanoTime();
-		
-					System.out.println(String.format("Sequential input04 time (ns): %.0f", (double)(sqtime2 - sqtime)));
-					System.out.println(String.format("Parallel input04 time (ns): %.0f", (double)(ptime2 - ptime)));
-					if((ptime2 - ptime)!=0){
-						System.out.println(String.format("Speed up is: %.5f\n ",((sqtime2 - sqtime)*1.0)/(1.0*(ptime2 - ptime))));	//divide the seq time by the par time to get the speed up
+					Tests test4 = new Tests(dataSet4);
+					try {
+						test4.runSpeedUpTest();
+					} catch (IOException e) {
+						e.printStackTrace();
 					}
 					break;
 				
 				default:
 					break;
-	
 				}
-			}	//end of if statement
+			}	//end of switch
 			else{
 				System.out.println("\nTry AGAIN!");
 				continue;
