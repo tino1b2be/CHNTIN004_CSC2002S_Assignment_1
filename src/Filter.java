@@ -6,7 +6,7 @@ public class Filter extends RecursiveTask<double[]>{
 	
 	public static int SEQUENTIAL_THRESHOLD = 1700;
 	public static int FILTER_SIZE = 3;
-	
+
 	private double[] dataSet;
 	private int hi;
 	private int low;
@@ -40,7 +40,6 @@ public class Filter extends RecursiveTask<double[]>{
 		this.low = low;
 		this.hi = hi;
 	}
-
 	
 	/**
 	 * Getter method for the dataSet
@@ -127,7 +126,7 @@ public class Filter extends RecursiveTask<double[]>{
 		return newDataSet;
 	}
 
-	//++++++++++_________SEQUENTIAL PROCESSING__________++++++++++++++++
+	//++++++++++_________PARALLEL PROCESSING__________++++++++++++++++
 
 	@Override
 	protected double[] compute() {
