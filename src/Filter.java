@@ -4,8 +4,8 @@ import java.util.concurrent.RecursiveTask;
 @SuppressWarnings("serial")
 public class Filter extends RecursiveTask<double[]>{
 	
-	public static int SEQUENTIAL_THRESHOLD = 1700;
-	public static int FILTER_SIZE = 3;
+	public static int SEQUENTIAL_THRESHOLD = 10000;
+	public static int FILTER_SIZE = 21;
 
 	private double[] dataSet;
 	private int hi;

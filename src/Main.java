@@ -23,7 +23,7 @@ public class Main {
 		double[] dataSet3 = null;
 		double[] dataSet4 = null;
 		double[] dataSetP = null;
-		System.out.println("Loading the input files");
+		System.out.println("Loading the input files...");
 		try {
 			dataSet1 = FileUtil.loadFile("SampleDataForAssignment1/inp1.txt");
 			//dataSet1 = FileUtil.loadFile("SampleDataForAssignment1/test.txt");
@@ -49,7 +49,8 @@ public class Main {
 					+ "6: Test Sequential cut-offs\n"
 					+ "7: Test Warm up times\n"
 					+ "8: Personal Input Size\n"
-					+ "9: Universal Speed Up Test\n"
+					+ "9: Universal Speed Up Test (Best filter and cut off)\n"
+					+ "10: Universal Speed Up Test (Worst filter and cut off)\n"
 					+ "q: Quit");
 			
 			String input = sc.nextLine();
@@ -110,10 +111,19 @@ public class Main {
 					}
 				}while(true);
 			}
-			else if (input.equals("9")){			// Universal Test. Test speed ups for different data sizes
+			else if (input.equals("9")){			// Universal Test. Test speed ups for different data sizes (best performance)
 				Tests newCustom = new Tests(dataSetP);
 				try {
-					newCustom.runUniversalSpeedUpTest();
+					newCustom.runUniversalSpeedUpTestBC();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+				break;
+			}
+			else if (input.equals("10")){			// Universal Test. Test speed ups for different data sizes (worst performance)
+				Tests newCustom = new Tests(dataSetP);
+				try {
+					newCustom.runUniversalSpeedUpTestWC();
 				} catch (IOException e) {
 					e.printStackTrace();
 				}

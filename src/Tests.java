@@ -59,8 +59,8 @@ public class Tests {
 			System.out.println("done running filter: " + Filter.FILTER_SIZE + "\n");
 			
 			//find the average time for the filter and add the average time for the filter into the dataOut array for both methods
-			seqDataOut.add(((avg(seqTimes)*1.0)/1000000000.0));
-			parDataOut.add(((avg(parTimes)*1.0)/1000000000.0));
+			seqDataOut.add((avg(seqTimes)*1.0));
+			parDataOut.add((avg(parTimes)*1.0));
 		}
 		
 		FileUtil.writeToFile(seqDataOut, "filter times for sequential runs.csv");
@@ -77,7 +77,7 @@ public class Tests {
 		// warm up loop...does 10 runs for warm up
 		warmUp();
 		
-		for (int i = 100; i < 15100; i+=100){
+		for (int i = 500; i < 100000; i+=1000){
 			Filter.setCuttOff(i);						//change the static cut off number 
 			System.out.println("Cut off being tested: " + i); 
 			long[] parTimes = new long[20];				// array to keep the times for each run to be averaged later
@@ -105,14 +105,13 @@ public class Tests {
 
 		}
 		///write the data to csv files
-		FileUtil.writeToFile(parDataOut, "cut off times for parallel runs.csv");
+		FileUtil.writeToFile(parDataOut, "cut off times for parallel runs 2.csv");
 	}
 
 	/**
 	 * Method to determine the most suitable time
 	 * @throws IOException 
-	 */
-	
+	 */	
 	public void runWarmUpTests() throws IOException{
 
 		for (int j = 0; j< 15; j++){
@@ -226,10 +225,53 @@ public class Tests {
 	/**
 	 * Method to run the Universal Speed Up Test
 	 */
-	public void runUniversalSpeedUpTest() throws IOException{
+	public void runUniversalSpeedUpTestBC() throws IOException{
 		warmUp();
-		
-		for (int i = 50000; i < 2000001; i+=50000){		// Main loop to change the size of the dataSet in use
+		Filter.setCuttOff(1700);
+		Filter.setFilterSize(3);
+		for (int i = 50000; i < 4000001; i+=50000){		// Main loop to change the size of the dataSet in use
+			tempDataSet = sliceDataSet(i, dataSet);
+			
+			long[] sqTimes = new long[30];
+			long[] prTimes = new long[30];
+			
+			long sqtime,sqtime2, ptime, ptime2;
+
+			for (int j = 0; j < 30; j++){
+				Filter set01 = new Filter(tempDataSet);		//Create a filter object to perform the filtering
+				
+				sqtime = System.nanoTime();
+				set01.sequential();							//process the data sequentially
+				sqtime2 = System.nanoTime();
+
+				ptime = System.nanoTime();
+				fjPool.invoke(set01);						//process the data using the parallel method
+				ptime2 = System.nanoTime();
+
+				sqTimes[i] = sqtime2-sqtime;				//add times to arrays
+				prTimes[i] = ptime2-ptime;
+				
+			} // end of loop testing current data set
+			
+			double sqAvg = avg(sqTimes);
+			double prAvg = avg(prTimes);
+			
+			seqDataOut.add(sqAvg);
+			parDataOut.add(prAvg);
+			
+		} //end of data set size loop
+		//write to .csv files
+		FileUtil.writeToFile(seqDataOut, "UT seq times.csv");
+		FileUtil.writeToFile(parDataOut, "UT par times.csv");
+	}
+	/**
+	 * Method to run the Universal Speed Up Test
+	 */
+	public void runUniversalSpeedUpTestWC() throws IOException{
+		warmUp();
+		Filter.setCuttOff(100);
+		Filter.setFilterSize(21);
+		for (int i = 50000; i < 4000001; i+=50000){		// Main loop to change the size of the dataSet in use
 			tempDataSet = sliceDataSet(i, dataSet);
 			
 			long[] sqTimes = new long[30];
