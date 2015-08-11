@@ -4,8 +4,8 @@ import java.util.concurrent.RecursiveTask;
 @SuppressWarnings("serial")
 public class Filter extends RecursiveTask<double[]>{
 	
-	public static int SEQUENTIAL_THRESHOLD = 10000;
-	public static int FILTER_SIZE = 21;
+	public static int SEQUENTIAL_THRESHOLD = 1500;
+	public static int FILTER_SIZE = 3;
 
 	private double[] dataSet;
 	private int hi;
@@ -15,7 +15,7 @@ public class Filter extends RecursiveTask<double[]>{
 	 * Constructor for the Filter Object
 	 * @param dataSet
 	 */
-	public Filter(double[] dataSet) {
+	public Filter(double[] dataSet) throws NullPointerException{
 		this.dataSet = dataSet;
 		hi = dataSet.length;
 	}
@@ -64,6 +64,36 @@ public class Filter extends RecursiveTask<double[]>{
 		// slice off a chunk of the dataSet same size as filter size
 		double[] filterBlock = sliceDataSet(start,finish);
 		return median(filterBlock);
+	}
+	
+	/**
+	 * Method to filter the data (using the mean filter)
+	 * @param size - Filter size
+	 * @param index - the index in the array to be filtered
+	 * @return
+	 */
+	public double meanFilter(int index){
+		
+		//TODO Filter must work properly when bigger than 3
+		
+		int finish = index + ((Filter.FILTER_SIZE-1)/2);
+		int start = index - ((Filter.FILTER_SIZE-1)/2);
+		// slice off a chunk of the dataSet same size as filter size
+		double[] filterBlock = sliceDataSet(start,finish);
+		return mean(filterBlock);
+	}
+
+	/**
+	 * Method that calculates the average of the numbers in a given array
+	 * @param filterBlock
+	 * @return Average of the numbers in the array
+	 */
+	private double mean(double[] filterBlock) {
+		double sum = 0.0;
+		for (int i = 0; i < filterBlock.length; i++){
+			sum+= filterBlock[i];
+		}
+		return sum/(filterBlock.length*1.0);
 	}
 
 	/**
